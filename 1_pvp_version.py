@@ -1,5 +1,5 @@
 import numpy as np
-import math
+
 class TicTacToe:
     def __init__(self):
         self.row_count = 3
@@ -38,15 +38,9 @@ class TicTacToe:
             return 0, True
         return 0, False
     
-    # def get_opponent(self, player):
-    #     return -player
+    def get_opponent(self, player):
+        return -player
     
-    # def get_opponent_value(self,value):
-    #     return -value
-    
-    # def change_perspective(self,state,player):
-    #     return state*player
-
 tictactoe=TicTacToe()
 player=1
 
@@ -75,69 +69,3 @@ while True:
         break
 
     player=tictactoe.get_opponent(player)
-
-# class Node:
-#     def __init__(self,game,args,state,parent=None,action_taken=None):
-#         self.game=game
-#         self.args=args
-#         self.state=state
-#         self.parent=parent
-#         self.action_taken=action_taken
-
-#         self.children=[]
-#         self.expandable_moves=game.get_valid_moves(state)
-
-#         self.visit_count=0
-#         self.value_sum=0
-
-#     def is_fully_expanded(self):
-#         return np.sum(self.expandable_moves)==0 and len(self.children)>0
-    
-#     def select(self):
-#         best_child=None
-#         best_ucb=-np.inf
-
-#         for child in self.children:
-#             ucb=child.get_ucb()
-#             if ucb>best_ucb:
-#                 best_ucb=ucb
-#                 best_child=child
-
-#         return best_child
-
-#     def get_ucb(self,child):
-#         q_value=1-((child.value_sum/child.visit_count)+1)/2
-#         return q_value+self.args['C']*math.sqrt(math.log(self.visit_count)/child.visit_count)
-    
-#     def expand(self):
-#         action=np.random.choice(np.where(self.expandable_moves==1)[0])
-#         self.expandable_moves[action]=0
-
-#         child_state=self.state.copy()
-#         child_state=self.game.get_next_state(child_state, action,1)
-#         child_state=self.game.change_perspective(child_state,player=-1)
-
-#         child=Node(self.game,self.args,child_state,parent=self,action_taken=action)
-#         self.children.append(child)
-
-#         return child
-
-# class MCTS:
-    def __init__(self,game,args):
-        self.game=game
-        self.args=args
-
-    def search(self,state):
-        root=Node(self.game,self.args,state)
-        
-        for search in range(self.args['num_searchs']):
-            node=root
-
-            while not node.is_fully_expanded():
-                node=node.select()
-
-            value,is_terminated=self.game.get_value_and_terminated(node.state, node.action_taken)
-            value=self.game.get_opponent_value(value)
-
-            if not is_terminated:
-                node=node.expand()
