@@ -70,10 +70,11 @@ class Node:
         best_ucb=-np.inf
 
         for child in self.children:
-            ucb=child.get_ucb()
+            ucb=child.get_ucb(child)
             if ucb>best_ucb:
-                best_ucb=ucb
                 best_child=child
+                best_ucb=ucb
+                
 
         return best_child
 
