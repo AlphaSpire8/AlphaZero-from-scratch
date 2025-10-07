@@ -1,1 +1,1 @@
-learn from [text](https://www.youtube.com/watch?v=wuSQpLinRB4)
+learn from a youtube video: [text](https://www.youtube.com/watch?v=wuSQpLinRB4)
