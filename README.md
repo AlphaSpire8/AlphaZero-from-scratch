@@ -1,0 +1,1 @@
+learn from [text](https://www.youtube.com/watch?v=wuSQpLinRB4)
