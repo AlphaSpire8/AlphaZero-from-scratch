@@ -122,7 +122,6 @@ class Node:
         if self.parent is not None:
             self.parent.backpropagate(value)  
 
-
 class MCTS:
     def __init__(self, game, args):
         self.game = game
@@ -152,21 +151,15 @@ class MCTS:
             action_probs[child.action_taken] = child.visit_count
         action_probs /= np.sum(action_probs)
         return action_probs
-        
-        
-        
+
 tictactoe = TicTacToe()
 player = 1
-
 args = {
     'C': 1.41,
     'num_searches': 1000
 }
-
 mcts = MCTS(tictactoe, args)
-
 state = tictactoe.get_initial_state()
-
 
 while True:
     print(state)
