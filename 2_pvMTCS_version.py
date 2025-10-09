@@ -53,6 +53,7 @@ class Node:
         self.game = game
         self.args = args
         self.state = state
+
         self.parent = parent
         self.action_taken = action_taken
         
@@ -81,12 +82,13 @@ class Node:
         q_value = 1 - ((child.value_sum / child.visit_count) + 1) / 2
         return q_value + self.args['C'] * math.sqrt(math.log(self.visit_count) / child.visit_count)
     
+    #append a child to the children list
     def expand(self):
         action = np.random.choice(np.where(self.expandable_moves == 1)[0])
         self.expandable_moves[action] = 0
         
         child_state = self.state.copy()
-        child_state = self.game.get_next_state(child_state, action, 1)
+        child_state = self.game.get_next_state(child_state, action, player=1)
         child_state = self.game.change_perspective(child_state, player=-1)
         
         child = Node(self.game, self.args, child_state, self, action)
@@ -128,23 +130,26 @@ class MCTS:
         self.args = args
         
     def search(self, state):
+        #创建根节点
         root = Node(self.game, self.args, state)
-        
-        for search in range(self.args['num_searches']):
+        #进行指定次数的搜索
+        for _ in range(self.args['num_searches']):
             node = root
-            
+            #MCTS 四步走
+            #step one: selection
             while node.is_fully_expanded():
                 node = node.select()
-                
+            #check if is_game_over    
             value, is_terminal = self.game.get_value_and_terminated(node.state, node.action_taken)
             value = self.game.get_opponent_value(value)
-            
+            #if not is_game_over, expand and simulate
             if not is_terminal:
+                #step two: expansion
                 node = node.expand()
+                #step three: simulation
                 value = node.simulate()
-                
+            #step four: backpropagation
             node.backpropagate(value)    
-            
             
         action_probs = np.zeros(self.game.action_size)
         for child in root.children:
@@ -158,12 +163,12 @@ args = {
     'C': 1.41,
     'num_searches': 1000
 }
-mcts = MCTS(tictactoe, args)
+mcts = MCTS(game=tictactoe, args=args)
 state = tictactoe.get_initial_state()
 
 while True:
     print(state)
-    
+    #human player
     if player == 1:
         valid_moves = tictactoe.get_valid_moves(state)
         print("valid_moves", [i for i in range(tictactoe.action_size) if valid_moves[i] == 1])
@@ -171,8 +176,8 @@ while True:
 
         if valid_moves[action] == 0:
             print("action not valid")
-            continue
-            
+            break
+    #MCTS player
     else:
         neutral_state = tictactoe.change_perspective(state, player)
         mcts_probs = mcts.search(neutral_state)
@@ -189,5 +194,5 @@ while True:
         else:
             print("draw")
         break
-        
+    #switch player    
     player = tictactoe.get_opponent(player)

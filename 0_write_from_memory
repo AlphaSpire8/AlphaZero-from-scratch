@@ -1,107 +1,35 @@
-import numpy as np
+class MCTS:
+    def __init__(self, game, args):
+        #game and args
+        self.game = game
+        self.args = args
 
-class TicTacToe:
-    def __init__(self):
-        self.row_count=3
-        self.col_count=3
-        self.action_size=self.row_count*self.col_count
+    #search for the best move
+    def search(self, state):
+        #create root node
+        root = Node(state, state, args=self.args)
 
-    def initialize_state(self):
-        '''
-        initialize the state with zeros
-        '''
-        initial_state=np.zeros((self.row_count,self.col_count),dtype=int)
-        return initial_state
+        #loop
+        for _ in range(self.args['num_searches']):
+            #start from root
+            node = root
 
-    def get_valid_moves(self,state):
-        '''
-        return a list 
-        with the size of action_size 
-        with 0 for valid moves and 1 for invalid moves
-        '''
-        valid_moves=np.zeros(self.action_size)
-        for i in range(self.row_count):
-            for j in range(self.col_count):
-                if state[i][j]!=0:
-                    valid_moves[i*self.col_count+j]==1
-        return valid_moves
+            while not node.is_fully_expanded():
+                #if not is_fully_expanded
+                #expand
+                node=node.expand()
+                #simulate
+                value=node.simulate()
+
+
+
+
+clss Node:
+    def __init__(self,state,game,args,parent,action):
+        pass
     
-    def is_action_valid(self,state,action):
-        '''
-        check if the action is valid or not
-        retrun True if valid and False if invalid
-        '''
-        if action>=self.action_size or action<0:
-            return False
-        elif state[action//self.col_count][action%self.col_count]==0:
-            return True
-        else:
-            return False
+    def is_fully_expanded():
+        pass
 
-    def update_state(self,state,action,player):
-        '''
-        update the state based on the action and player
-        '''
-        state[action//self.col_count][action%self.col_count]=player
-        return state
-
-    def is_game_over(self,state):
-        '''
-        check if the game is over or not
-        return 'win' or 'draw' or 'not over yet'
-        '''
-        #check rows
-        for i in range(self.col_count):
-            if abs(state[i,:].sum())==self.col_count:
-                return 'win'
-        #check columns
-        for i in range(self.row_count):
-            if abs(state[:,i].sum())==self.row_count:
-                return 'win'
-        #check diagonals
-        if abs(state.trace())==self.row_count:
-            return 'win'
-        if abs(np.fliplr(state).trace())==self.row_count:
-            return 'win'
-        #check if draw
-        if np.all(state!=0):
-            return 'draw'
-        #game is not over yet
-        return 'not over yet'
-
-tictactoe=TicTacToe()
-#initialize state
-state=tictactoe.initialize_state()
-#set first player as 1
-player=1
-
-#start loop
-while True:
-    #print current state
-    print(state)
-    #get valid moves
-    valid_moves=tictactoe.get_valid_moves(state)
-    #print valid moves
-    print([i for i,value in enumerate(valid_moves) if value==0])
-    #get action from user
-    action=int(input(f"Player {player}, please enter your move : "))
-    #print decoration line
-    print("-"*25)
-    print("-"*25)
-    #check if action is valid
-    if not tictactoe.is_action_valid(state,action):
-        print("Invalid move")
-        break
-    #update state
-    state=tictactoe.update_state(state,action,player)
-    #check if game is over
-    if tictactoe.is_game_over(state)=='win':
-        print(state)
-        print("Player",player,"wins",",","Player",-player,"loses")
-        break
-    elif tictactoe.is_game_over(state)=='draw':
-        print(state)
-        print("Draw")
-        break
-    #change player
-    player=-player
+    def expand():
+        pass
